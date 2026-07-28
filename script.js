@@ -176,5 +176,35 @@ async function renderProjects(repos) {
     });
 }
 
+// ============ FUNCIONALIDAD QR ============
+
+// Obtener elementos del modal
+const modal = document.getElementById('qrModal');
+const btn = document.getElementById('qrButton');
+
+// Abrir modal al hacer click en el boton QR
+btn.addEventListener('click', function() {
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+});
+
+// Cerrar modal al hacer click fuera del contenido
+modal.addEventListener('click', function(event) {
+    if (event.target === modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
+});
+
+// Cerrar modal con la tecla ESC
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
+});
+
+// ============ FIN FUNCIONALIDAD QR ============
+
 // Iniciar carga
 loadProjects();

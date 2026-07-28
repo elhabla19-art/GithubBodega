@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bodega de Apps</title>
+    <title>GithubBodega</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
     
     <script>
         const APP_CONFIG = {
             GITHUB_USERNAME: 'elhabla19-art',
-            TITLE: 'Bodega de Apps',
+            TITLE: 'GithubBodega',
             SUBTITLE: 'Mis proyectos en GitHub Pages'
         };
     </script>
@@ -18,7 +18,7 @@
 <body>
     <div class="warehouse">
         <header>
-            <h1>Bodega de Apps</h1>
+            <h1>Github Bodega</h1>
             <p class="subtitle">Mis proyectos alojados en GitHub Pages</p>
         </header>
 
@@ -31,8 +31,16 @@
         </div>
 
         <footer>
-            <p>Bodega de Apps - Proyectos publicos de elhabla19-art</p>
+            <p>GithubBodega - Proyectos publicos de elhabla19-art</p>
+            <button id="qrButton" class="qr-button">QR</button>
         </footer>
+    </div>
+
+    <!-- Modal para el QR -->
+    <div id="qrModal" class="qr-modal">
+        <div class="qr-modal-content">
+            <img src="qr-code.png" alt="Código QR" class="qr-image">
+        </div>
     </div>
 
     <script src="script.js"></script>
