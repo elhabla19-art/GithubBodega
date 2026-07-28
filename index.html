@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bodega de Apps</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    
+    <script>
+        const APP_CONFIG = {
+            GITHUB_USERNAME: 'elhabla19-art',
+            TITLE: 'Bodega de Apps',
+            SUBTITLE: 'Mis proyectos en GitHub Pages'
+        };
+    </script>
+</head>
+<body>
+    <div class="warehouse">
+        <header>
+            <h1>Bodega de Apps</h1>
+            <p class="subtitle">Mis proyectos alojados en GitHub Pages</p>
+        </header>
+
+        <div class="stats">
+            <span id="projectCount">Cargando proyectos...</span>
+        </div>
+
+        <div id="projectsContainer" class="shelves">
+            <!-- Los proyectos se mostrarán aquí -->
+        </div>
+
+        <footer>
+            <p>Bodega de Apps - Proyectos publicos de elhabla19-art</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
