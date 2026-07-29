@@ -6,8 +6,8 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    background: #1a1a1a;
-    color: #e0e0e0;
+    background: #160029; /* Midnight Violet */
+    color: #F5E9E2; /* Linen */
     min-height: 100vh;
 }
 
@@ -21,7 +21,7 @@ header {
     text-align: center;
     margin-bottom: 3rem;
     padding: 2rem 0;
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid #773344; /* Wine Plum */
 }
 
 h1 {
@@ -29,23 +29,43 @@ h1 {
     font-weight: 900;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: #f5f5f5;
+    color: #F5E9E2; /* Linen */
     margin-bottom: 0.5rem;
-    text-shadow: 0 2px 10px rgba(255,255,255,0.1);
+    text-shadow: 0 2px 20px rgba(212, 77, 92, 0.3); /* Lobster Pink */
+}
+
+h1::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    margin: 0.5rem auto 0;
+    background: linear-gradient(90deg, #D44D5C, #773344); /* Lobster Pink to Wine Plum */
+    border-radius: 2px;
 }
 
 .subtitle {
-    color: #999;
+    color: #E3B5A4; /* Almond Silk */
     font-size: 1rem;
     letter-spacing: 2px;
+}
+
+.subtitle span {
+    color: #D44D5C; /* Lobster Pink */
+    font-weight: 500;
 }
 
 .stats {
     text-align: center;
     margin-bottom: 2rem;
-    color: #666;
+    color: #E3B5A4; /* Almond Silk */
     font-size: 0.9rem;
     letter-spacing: 1px;
+}
+
+.stats span {
+    color: #D44D5C; /* Lobster Pink */
+    font-weight: 600;
 }
 
 .shelves {
@@ -56,8 +76,8 @@ h1 {
 }
 
 .project-item {
-    background: #222;
-    border: 1px solid #333;
+    background: #773344; /* Wine Plum */
+    border: none;
     border-radius: 10px;
     padding: 1rem 0.75rem;
     text-align: center;
@@ -73,9 +93,8 @@ h1 {
 
 .project-item:hover {
     transform: translateY(-4px);
-    border-color: #555;
-    background: #2a2a2a;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    background: #773344;
+    box-shadow: 0 8px 30px rgba(212, 77, 92, 0.25); /* Lobster Pink shadow */
 }
 
 .project-item .favicon-wrapper {
@@ -85,16 +104,17 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #1a1a1a;
+    background: rgba(245, 233, 226, 0.2) !important; /* Linen translucido */
     border-radius: 14px;
-    border: 1px solid #333;
+    border: none;
     padding: 10px;
     transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
 }
 
 .project-item:hover .favicon-wrapper {
-    border-color: #555;
-    background: #222;
+    background: rgba(245, 233, 226, 0.3) !important; /* Linen translucido - hover */
+    box-shadow: 0 0 25px rgba(245, 233, 226, 0.1);
 }
 
 .project-item .favicon-wrapper img {
@@ -102,6 +122,7 @@ h1 {
     height: 100%;
     object-fit: contain;
     border-radius: 6px;
+    display: block;
 }
 
 .project-item .favicon-placeholder {
@@ -113,13 +134,14 @@ h1 {
     border-radius: 6px;
     font-weight: bold;
     font-size: 2rem;
-    color: white;
+    color: #773344; /* Wine Plum */
+    background: transparent;
 }
 
 .project-item .project-name {
     font-size: 0.85rem;
     font-weight: 500;
-    color: #e0e0e0;
+    color: #F5E9E2; /* Linen */
     text-align: center;
     line-height: 1.2;
     max-width: 100%;
@@ -127,19 +149,19 @@ h1 {
 }
 
 .project-item .project-name a {
-    color: #e0e0e0;
+    color: #F5E9E2; /* Linen */
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .project-item:hover .project-name a {
-    color: #fff;
+    color: #E3B5A4; /* Almond Silk */
 }
 
 .loading {
     text-align: center;
     padding: 4rem;
-    color: #666;
+    color: #E3B5A4; /* Almond Silk */
     grid-column: 1 / -1;
 }
 
@@ -147,8 +169,8 @@ h1 {
     display: inline-block;
     width: 40px;
     height: 40px;
-    border: 3px solid #333;
-    border-top: 3px solid #888;
+    border: 3px solid #773344; /* Wine Plum */
+    border-top: 3px solid #D44D5C; /* Lobster Pink */
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 1rem;
@@ -162,9 +184,9 @@ h1 {
 .error {
     text-align: center;
     padding: 2rem;
-    color: #ff6b6b;
-    background: #2a1a1a;
-    border: 1px solid #ff6b6b;
+    color: #D44D5C; /* Lobster Pink */
+    background: #77334433; /* Wine Plum con transparencia */
+    border: 1px solid #D44D5C; /* Lobster Pink */
     border-radius: 8px;
     grid-column: 1 / -1;
 }
@@ -173,10 +195,18 @@ footer {
     text-align: center;
     margin-top: 4rem;
     padding-top: 2rem;
-    border-top: 1px solid #333;
-    color: #555;
+    border-top: 1px solid #773344; /* Wine Plum */
+    color: #E3B5A4; /* Almond Silk */
     font-size: 0.8rem;
     letter-spacing: 1px;
+}
+
+footer p {
+    color: #E3B5A4; /* Almond Silk */
+}
+
+footer p strong {
+    color: #D44D5C; /* Lobster Pink */
 }
 
 /* Estilos del boton QR */
@@ -184,8 +214,8 @@ footer {
     margin-top: 1rem;
     padding: 8px 24px;
     background: transparent;
-    color: #888;
-    border: 1px solid #444;
+    color: #D44D5C; /* Lobster Pink */
+    border: 1px solid #773344; /* Wine Plum */
     border-radius: 6px;
     font-size: 0.9rem;
     cursor: pointer;
@@ -195,9 +225,10 @@ footer {
 }
 
 .qr-button:hover {
-    background: #2a2a2a;
-    color: #fff;
-    border-color: #666;
+    background: #D44D5C; /* Lobster Pink */
+    color: #F5E9E2; /* Linen */
+    border-color: #D44D5C;
+    box-shadow: 0 0 20px rgba(212, 77, 92, 0.3);
 }
 
 /* Modal para el QR */
@@ -209,7 +240,7 @@ footer {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(22, 0, 41, 0.92); /* Midnight Violet con opacidad */
     animation: fadeIn 0.3s ease;
 }
 
@@ -220,14 +251,15 @@ footer {
 }
 
 .qr-modal-content {
-    background: #1a1a1a;
+    background: #773344; /* Wine Plum */
     padding: 2rem;
     border-radius: 16px;
-    border: 1px solid #333;
+    border: 1px solid #E3B5A4; /* Almond Silk */
     max-width: 400px;
     width: 90%;
     position: relative;
     animation: scaleIn 0.3s ease;
+    box-shadow: 0 0 60px rgba(212, 77, 92, 0.2);
 }
 
 .qr-image {
@@ -253,6 +285,25 @@ footer {
     }
 }
 
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #160029; /* Midnight Violet */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #773344; /* Wine Plum */
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #D44D5C; /* Lobster Pink */
+}
+
+/* Responsive */
 @media (max-width: 768px) {
     .warehouse {
         padding: 1rem;
@@ -260,6 +311,10 @@ footer {
     
     h1 {
         font-size: 2rem;
+    }
+    
+    h1::after {
+        width: 60px;
     }
     
     .shelves {
