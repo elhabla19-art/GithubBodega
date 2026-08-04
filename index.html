@@ -10,7 +10,16 @@
         const APP_CONFIG = {
             GITHUB_USERNAME: 'elhabla19-art',
             TITLE: 'Github Bodega',
-            SUBTITLE: 'Mis proyectos en GitHub Pages'
+            SUBTITLE: 'Mis proyectos en GitHub Pages',
+            DEFAULT_ROOM_CODE: 'GRIL',
+            PROJECTS: {
+                'QuixxDados': 'https://elhabla19-art.github.io/QuixxDados/',
+                'FigurasDados': 'https://elhabla19-art.github.io/FigurasDados/',
+                'CleverDados': 'https://elhabla19-art.github.io/CleverDados/',
+                'MasterCartas': 'https://elhabla19-art.github.io/MasterCartas/',
+                'ParaDice': 'https://elhabla19-art.github.io/ParaDice/',
+                'JuegoCassettes': 'https://elhabla19-art.github.io/JuegoCassettes/'
+            }
         };
     </script>
 </head>
@@ -22,10 +31,21 @@
             <p style="font-size: 0.8rem; color: #D44D5C; margin-top: 0.5rem;">
                 Haz clic aqui para filtrar por temas
             </p>
+            <div id="syncIndicator" class="sync-indicator"></div>
         </header>
 
         <div id="filterDropdown" class="filter-dropdown">
             <div class="filter-dropdown-content">
+                <div class="sync-config">
+                    <label class="sync-toggle">
+                        <input type="checkbox" id="syncToggle">
+                        <span class="sync-label">
+                            <span class="main">Sala unificada</span>
+                            <span class="hint">Cada juego usara la sala GRIL</span>
+                        </span>
+                    </label>
+                </div>
+                <hr class="sync-divider">
                 <div class="filter-dropdown-header">
                     <span>Filtrar por temas</span>
                 </div>

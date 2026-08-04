@@ -1,6 +1,7 @@
 // Configuracion
 const GITHUB_USERNAME = window.APP_CONFIG?.GITHUB_USERNAME || 'elhabla19-art';
 const API_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
+const ROOM_CODE = window.APP_CONFIG?.DEFAULT_ROOM_CODE || 'GRIL';
 
 // DOM Elements
 const projectsContainer = document.getElementById('projectsContainer');
@@ -13,8 +14,61 @@ let allProjects = [];
 let currentFilter = null;
 let allTopics = new Set();
 let isDropdownOpen = false;
+let syncEnabled = false;
 
-// Utilidades
+// ===== SINCRONIZACION DE SALAS =====
+function initSync() {
+    const syncCheckbox = document.getElementById('syncToggle');
+    const syncIndicator = document.getElementById('syncIndicator');
+    
+    if (!syncCheckbox) return;
+    
+    // Cargar estado guardado
+    const savedState = localStorage.getItem('syncEnabled');
+    if (savedState === 'true') {
+        syncEnabled = true;
+        syncCheckbox.checked = true;
+        updateSyncUI(syncIndicator);
+    }
+    
+    // Evento del checkbox
+    syncCheckbox.addEventListener('change', function() {
+        syncEnabled = this.checked;
+        localStorage.setItem('syncEnabled', syncEnabled);
+        updateSyncUI(syncIndicator);
+    });
+}
+
+function updateSyncUI(indicator) {
+    if (!indicator) return;
+    if (syncEnabled) {
+        indicator.textContent = 'Sala unificada: ' + ROOM_CODE;
+        indicator.classList.add('active');
+    } else {
+        indicator.classList.remove('active');
+    }
+}
+
+// Abrir proyecto con o sin parametro de sala
+function openProject(projectName) {
+    const url = window.APP_CONFIG?.PROJECTS?.[projectName];
+    if (!url) {
+        // Fallback: construir URL desde el nombre del repo
+        const fallbackUrl = `https://${GITHUB_USERNAME}.github.io/${projectName}/`;
+        const finalUrl = syncEnabled ? fallbackUrl + '?auto=1' : fallbackUrl;
+        window.open(finalUrl, '_blank');
+        return;
+    }
+    
+    let finalUrl = url;
+    if (syncEnabled) {
+        // Añadir el parametro auto=1 si la URL no lo tiene ya
+        finalUrl = url + (url.includes('?') ? '&auto=1' : '?auto=1');
+    }
+    window.open(finalUrl, '_blank');
+}
+
+// ===== UTILIDADES =====
 function getFaviconUrl(repoName, username) {
     const baseUrl = `https://${username}.github.io/${repoName}`;
     return [
@@ -67,7 +121,7 @@ function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Renderizado
+// ===== RENDERIZADO =====
 function renderProjectsHTML(repos) {
     let html = '';
     if (repos.length === 0) {
@@ -80,10 +134,9 @@ function renderProjectsHTML(repos) {
     }
     for (const repo of repos) {
         const displayName = getDisplayName(repo.name);
-        const projectUrl = `https://${GITHUB_USERNAME}.github.io/${repo.name}/`;
         const color = getColorFromName(repo.name);
         html += `
-            <div class="project-item" data-repo="${repo.name}" onclick="window.open('${projectUrl}', '_blank')">
+            <div class="project-item" data-repo="${repo.name}" onclick="openProject('${repo.name}')">
                 <div class="favicon-wrapper" style="background: ${color}22; border-color: ${color}44;">
                     <div class="favicon-placeholder" style="background: ${color};">
                         ${displayName.charAt(0)}
@@ -97,7 +150,7 @@ function renderProjectsHTML(repos) {
                     />
                 </div>
                 <div class="project-name">
-                    <a href="${projectUrl}" target="_blank">${displayName}</a>
+                    <a href="#" onclick="event.preventDefault(); openProject('${repo.name}')">${displayName}</a>
                 </div>
             </div>
         `;
@@ -133,7 +186,7 @@ async function renderProjects(repos) {
     Animations.enter(document.querySelectorAll('.project-item'));
 }
 
-// Filtrado
+// ===== FILTRADO =====
 function filterProjectsByTopic(topic) {
     if (currentFilter === topic) {
         currentFilter = null;
@@ -213,7 +266,7 @@ function filterProjectsByTopic(topic) {
     closeDropdown();
 }
 
-// Dropdown
+// ===== DROPDOWN =====
 function toggleDropdown() {
     if (isDropdownOpen) {
         closeDropdown();
@@ -251,7 +304,7 @@ function closeDropdown() {
     });
 }
 
-// Event Listeners
+// ===== EVENT LISTENERS =====
 filterHeader.addEventListener('click', toggleDropdown);
 
 document.addEventListener('click', function(event) {
@@ -271,7 +324,7 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// QR Modal
+// ===== QR MODAL =====
 const qrModal = document.getElementById('qrModal');
 const qrButton = document.getElementById('qrButton');
 
@@ -291,7 +344,7 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// Carga inicial
+// ===== CARGA INICIAL =====
 async function loadProjects() {
     try {
         projectsContainer.innerHTML = `
@@ -336,6 +389,13 @@ async function loadProjects() {
     }
 }
 
+// ===== EXPORTAR FUNCIONES GLOBALES =====
 window.filterProjectsByTopic = filterProjectsByTopic;
 window.capitalize = capitalize;
-loadProjects();
+window.openProject = openProject;
+
+// ===== INICIALIZAR =====
+document.addEventListener('DOMContentLoaded', function() {
+    initSync();
+    loadProjects();
+});

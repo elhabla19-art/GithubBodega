@@ -558,3 +558,66 @@ footer p strong {
 .filter-dropdown-content::-webkit-scrollbar-thumb:hover {
     background: rgba(212, 77, 92, 0.5);
 }
+
+/* Sincronizacion de salas */
+.sync-config {
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid rgba(245, 233, 226, 0.08);
+    margin-bottom: 0.8rem;
+}
+
+.sync-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sync-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #D44D5C;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.sync-toggle .sync-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.sync-toggle .sync-label .main {
+    font-weight: 600;
+    color: #F5E9E2;
+    font-size: 0.9rem;
+}
+
+.sync-toggle .sync-label .hint {
+    font-size: 0.7rem;
+    color: #888;
+    letter-spacing: 0.3px;
+}
+
+.sync-divider {
+    border: none;
+    border-top: 1px solid rgba(245, 233, 226, 0.06);
+    margin: 0.6rem 0;
+}
+
+.sync-indicator {
+    display: none;
+    font-size: 0.7rem;
+    color: #4CAF50;
+    background: #4CAF5022;
+    padding: 2px 12px;
+    border-radius: 12px;
+    border: 1px solid #4CAF5044;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+}
+
+.sync-indicator.active {
+    display: inline-block;
+}
