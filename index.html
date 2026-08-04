@@ -6,7 +6,6 @@
     <title>Github Bodega</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
-    
     <script>
         const APP_CONFIG = {
             GITHUB_USERNAME: 'elhabla19-art',
@@ -17,18 +16,24 @@
 </head>
 <body>
     <div class="warehouse">
-        <header>
+        <header id="filterHeader" style="cursor: pointer;">
             <h1>Github Bodega</h1>
             <p class="subtitle">Mis proyectos alojados en GitHub Pages</p>
+            <p style="font-size: 0.8rem; color: #D44D5C; margin-top: 0.5rem;">
+                Haz clic aqui para filtrar por temas
+            </p>
         </header>
 
-        <div class="stats">
-            <span id="projectCount">Cargando proyectos...</span>
+        <div id="filterDropdown" class="filter-dropdown">
+            <div class="filter-dropdown-content">
+                <div class="filter-dropdown-header">
+                    <span>Filtrar por temas</span>
+                </div>
+                <div id="filterTopicsContainer" class="filter-topics-container"></div>
+            </div>
         </div>
 
-        <div id="projectsContainer" class="shelves">
-            <!-- Los proyectos se mostrarán aquí -->
-        </div>
+        <div id="projectsContainer" class="shelves"></div>
 
         <footer>
             <p>GithubBodega - Proyectos publicos de elhabla19-art</p>
@@ -36,13 +41,13 @@
         </footer>
     </div>
 
-    <!-- Modal para el QR -->
     <div id="qrModal" class="qr-modal">
         <div class="qr-modal-content">
-            <img src="qr-code.png" alt="Código QR" class="qr-image">
+            <img src="qr-code.png" alt="Codigo QR" class="qr-image">
         </div>
     </div>
 
+    <script src="animations.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,12 +1,20 @@
-// Configuracion desde el HTML
+// Configuracion
 const GITHUB_USERNAME = window.APP_CONFIG?.GITHUB_USERNAME || 'elhabla19-art';
 const API_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
 
 // DOM Elements
 const projectsContainer = document.getElementById('projectsContainer');
-const projectCount = document.getElementById('projectCount');
+const filterHeader = document.getElementById('filterHeader');
+const filterDropdown = document.getElementById('filterDropdown');
+const filterTopicsContainer = document.getElementById('filterTopicsContainer');
 
-// Funcion para obtener el favicon del proyecto
+// Estado
+let allProjects = [];
+let currentFilter = null;
+let allTopics = new Set();
+let isDropdownOpen = false;
+
+// Utilidades
 function getFaviconUrl(repoName, username) {
     const baseUrl = `https://${username}.github.io/${repoName}`;
     return [
@@ -18,7 +26,6 @@ function getFaviconUrl(repoName, username) {
     ];
 }
 
-// Funcion para probar si una imagen existe
 function imageExists(url) {
     return new Promise((resolve) => {
         const img = new Image();
@@ -28,31 +35,24 @@ function imageExists(url) {
     });
 }
 
-// Funcion para obtener el primer favicon que exista
 async function getValidFavicon(repoName, username) {
     const urls = getFaviconUrl(repoName, username);
-    
     for (const url of urls) {
         const validUrl = await imageExists(url);
-        if (validUrl) {
-            return validUrl;
-        }
+        if (validUrl) return validUrl;
     }
-    
     return null;
 }
 
-// Funcion para obtener el nombre limpio del proyecto
 function getDisplayName(repoName) {
     return repoName
         .replace(/[-_]/g, ' ')
         .replace(/\b\w/g, l => l.toUpperCase());
 }
 
-// Funcion para obtener el color de fondo basado en el nombre
 function getColorFromName(name) {
     const colors = [
-        '#4CAF50', '#2196F3', '#FF9800', '#E91E63', 
+        '#4CAF50', '#2196F3', '#FF9800', '#E91E63',
         '#9C27B0', '#00BCD4', '#FF5722', '#8BC34A',
         '#FFEB3B', '#607D8B', '#795548', '#9E9E9E'
     ];
@@ -63,83 +63,34 @@ function getColorFromName(name) {
     return colors[Math.abs(hash) % colors.length];
 }
 
-// Funcion para cargar los proyectos
-async function loadProjects() {
-    try {
-        projectsContainer.innerHTML = `
-            <div class="loading">
-                <div class="spinner"></div>
-                <p>Cargando bodega...</p>
-            </div>
-        `;
-
-        const response = await fetch(API_URL);
-        
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        
-        const repos = await response.json();
-        
-        // Filtrar solo repositorios publicos con GitHub Pages habilitado
-        const publicPagesRepos = repos.filter(repo => {
-            return repo.visibility === 'public' && repo.has_pages === true;
-        });
-
-        projectCount.textContent = `${publicPagesRepos.length} proyectos disponibles`;
-
-        if (publicPagesRepos.length === 0) {
-            projectsContainer.innerHTML = `
-                <div class="error">
-                    <p>No se encontraron proyectos publicos con GitHub Pages habilitado</p>
-                    <p style="font-size: 0.8rem; margin-top: 0.5rem; color: #888;">
-                        Usuario: ${GITHUB_USERNAME}
-                    </p>
-                </div>
-            `;
-            return;
-        }
-
-        await renderProjects(publicPagesRepos);
-
-    } catch (error) {
-        console.error('Error al cargar proyectos:', error);
-        projectsContainer.innerHTML = `
-            <div class="error">
-                <p>Error al cargar la bodega</p>
-                <p style="font-size: 0.8rem; margin-top: 0.5rem; color: #888;">
-                    Usuario: ${GITHUB_USERNAME}<br>
-                    ${error.message}
-                </p>
-            </div>
-        `;
-        projectCount.textContent = 'Error al cargar proyectos';
-    }
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Funcion para renderizar los proyectos
-async function renderProjects(repos) {
+// Renderizado
+function renderProjectsHTML(repos) {
     let html = '';
-    const faviconPromises = [];
-    
+    if (repos.length === 0) {
+        return `
+            <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #E3B5A4;">
+                <p style="font-size: 1.2rem;">No hay proyectos con este tema</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem; color: #888;">Prueba con otro filtro</p>
+            </div>
+        `;
+    }
     for (const repo of repos) {
         const displayName = getDisplayName(repo.name);
         const projectUrl = `https://${GITHUB_USERNAME}.github.io/${repo.name}/`;
         const color = getColorFromName(repo.name);
-        
-        faviconPromises.push(
-            getValidFavicon(repo.name, GITHUB_USERNAME)
-        );
-        
         html += `
             <div class="project-item" data-repo="${repo.name}" onclick="window.open('${projectUrl}', '_blank')">
                 <div class="favicon-wrapper" style="background: ${color}22; border-color: ${color}44;">
                     <div class="favicon-placeholder" style="background: ${color};">
                         ${displayName.charAt(0)}
                     </div>
-                    <img 
+                    <img
                         class="favicon-img"
-                        src="" 
+                        src=""
                         alt="${displayName}"
                         style="display: none; width: 100%; height: 100%; object-fit: contain; border-radius: 6px;"
                         loading="lazy"
@@ -151,21 +102,26 @@ async function renderProjects(repos) {
             </div>
         `;
     }
-    
-    projectsContainer.innerHTML = html;
-    
+    return html;
+}
+
+async function renderProjects(repos) {
+    allProjects = repos;
+    allTopics = new Set();
+    repos.forEach(repo => {
+        (repo.topics || []).forEach(topic => allTopics.add(topic));
+    });
+    projectsContainer.innerHTML = renderProjectsHTML(repos);
+    const faviconPromises = repos.map(repo => getValidFavicon(repo.name, GITHUB_USERNAME));
     const favicons = await Promise.all(faviconPromises);
-    
     document.querySelectorAll('.project-item').forEach((item, index) => {
         const faviconUrl = favicons[index];
         const img = item.querySelector('.favicon-img');
         const placeholder = item.querySelector('.favicon-placeholder');
-        
         if (faviconUrl) {
             img.src = faviconUrl;
             img.style.display = 'block';
             placeholder.style.display = 'none';
-            
             img.onerror = function() {
                 this.style.display = 'none';
                 placeholder.style.display = 'flex';
@@ -174,37 +130,212 @@ async function renderProjects(repos) {
             placeholder.style.display = 'flex';
         }
     });
+    Animations.enter(document.querySelectorAll('.project-item'));
 }
 
-// ============ FUNCIONALIDAD QR ============
+// Filtrado
+function filterProjectsByTopic(topic) {
+    if (currentFilter === topic) {
+        currentFilter = null;
+        document.querySelectorAll('.filter-topic-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        Animations.filterAndAnimate(
+            projectsContainer,
+            allProjects,
+            () => {
+                projectsContainer.innerHTML = renderProjectsHTML(allProjects);
+                setTimeout(async () => {
+                    const faviconPromises = allProjects.map(repo => getValidFavicon(repo.name, GITHUB_USERNAME));
+                    const favicons = await Promise.all(faviconPromises);
+                    document.querySelectorAll('.project-item').forEach((item, index) => {
+                        const faviconUrl = favicons[index];
+                        const img = item.querySelector('.favicon-img');
+                        const placeholder = item.querySelector('.favicon-placeholder');
+                        if (faviconUrl) {
+                            img.src = faviconUrl;
+                            img.style.display = 'block';
+                            placeholder.style.display = 'none';
+                            img.onerror = function() {
+                                this.style.display = 'none';
+                                placeholder.style.display = 'flex';
+                            };
+                        } else {
+                            placeholder.style.display = 'flex';
+                        }
+                    });
+                }, 50);
+            }
+        );
+        closeDropdown();
+        return;
+    }
 
-// Obtener elementos del modal
-const modal = document.getElementById('qrModal');
-const btn = document.getElementById('qrButton');
+    currentFilter = topic;
+    document.querySelectorAll('.filter-topic-btn').forEach(btn => {
+        const btnTopic = btn.dataset.topic;
+        if (btnTopic === topic) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    const filtered = allProjects.filter(repo =>
+        (repo.topics || []).includes(topic)
+    );
+    Animations.filterAndAnimate(
+        projectsContainer,
+        filtered,
+        () => {
+            projectsContainer.innerHTML = renderProjectsHTML(filtered);
+            setTimeout(async () => {
+                const faviconPromises = filtered.map(repo => getValidFavicon(repo.name, GITHUB_USERNAME));
+                const favicons = await Promise.all(faviconPromises);
+                document.querySelectorAll('.project-item').forEach((item, index) => {
+                    const faviconUrl = favicons[index];
+                    const img = item.querySelector('.favicon-img');
+                    const placeholder = item.querySelector('.favicon-placeholder');
+                    if (faviconUrl) {
+                        img.src = faviconUrl;
+                        img.style.display = 'block';
+                        placeholder.style.display = 'none';
+                        img.onerror = function() {
+                            this.style.display = 'none';
+                            placeholder.style.display = 'flex';
+                        };
+                    } else {
+                        placeholder.style.display = 'flex';
+                    }
+                });
+            }, 50);
+        }
+    );
+    closeDropdown();
+}
 
-// Abrir modal al hacer click en el boton QR
-btn.addEventListener('click', function() {
-    modal.classList.add('show');
-    modal.style.display = 'flex';
-});
+// Dropdown
+function toggleDropdown() {
+    if (isDropdownOpen) {
+        closeDropdown();
+    } else {
+        openDropdown();
+    }
+}
 
-// Cerrar modal al hacer click fuera del contenido
-modal.addEventListener('click', function(event) {
-    if (event.target === modal) {
-        modal.classList.remove('show');
-        modal.style.display = 'none';
+function openDropdown() {
+    const topicsArray = Array.from(allTopics).sort();
+    if (topicsArray.length === 0) {
+        filterTopicsContainer.innerHTML = `
+            <p style="color: #E3B5A4; text-align: center; padding: 1rem; width: 100%;">
+                No hay topics disponibles
+            </p>
+        `;
+    } else {
+        filterTopicsContainer.innerHTML = topicsArray.map(topic => `
+            <button class="filter-topic-btn ${currentFilter === topic ? 'active' : ''}"
+                    data-topic="${topic}"
+                    onclick="filterProjectsByTopic('${topic}')">
+                #${capitalize(topic)}
+                <span class="topic-count">${allProjects.filter(repo => (repo.topics || []).includes(topic)).length}</span>
+            </button>
+        `).join('');
+    }
+    Animations.openDropdown(filterDropdown);
+    isDropdownOpen = true;
+}
+
+function closeDropdown() {
+    if (!isDropdownOpen) return;
+    Animations.closeDropdown(filterDropdown, () => {
+        isDropdownOpen = false;
+    });
+}
+
+// Event Listeners
+filterHeader.addEventListener('click', toggleDropdown);
+
+document.addEventListener('click', function(event) {
+    if (isDropdownOpen) {
+        const target = event.target;
+        const isHeader = filterHeader.contains(target);
+        const isDropdown = filterDropdown.contains(target);
+        if (!isHeader && !isDropdown) {
+            closeDropdown();
+        }
     }
 });
 
-// Cerrar modal con la tecla ESC
 document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape' && modal.classList.contains('show')) {
-        modal.classList.remove('show');
-        modal.style.display = 'none';
+    if (event.key === 'Escape' && isDropdownOpen) {
+        closeDropdown();
     }
 });
 
-// ============ FIN FUNCIONALIDAD QR ============
+// QR Modal
+const qrModal = document.getElementById('qrModal');
+const qrButton = document.getElementById('qrButton');
 
-// Iniciar carga
+qrButton.addEventListener('click', function() {
+    Animations.openModal(qrModal);
+});
+
+qrModal.addEventListener('click', function(event) {
+    if (event.target === qrModal) {
+        Animations.closeModal(qrModal);
+    }
+});
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && qrModal.classList.contains('show')) {
+        Animations.closeModal(qrModal);
+    }
+});
+
+// Carga inicial
+async function loadProjects() {
+    try {
+        projectsContainer.innerHTML = `
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Cargando bodega...</p>
+            </div>
+        `;
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        const repos = await response.json();
+        const publicPagesRepos = repos.filter(repo => {
+            return repo.visibility === 'public' &&
+                   repo.has_pages === true &&
+                   !repo.topics.includes('inicio');
+        });
+        if (publicPagesRepos.length === 0) {
+            projectsContainer.innerHTML = `
+                <div class="error">
+                    <p>No se encontraron proyectos publicos con GitHub Pages habilitado</p>
+                    <p style="font-size: 0.8rem; margin-top: 0.5rem; color: #888;">
+                        Usuario: ${GITHUB_USERNAME}
+                    </p>
+                </div>
+            `;
+            return;
+        }
+        await renderProjects(publicPagesRepos);
+    } catch (error) {
+        console.error('Error al cargar proyectos:', error);
+        projectsContainer.innerHTML = `
+            <div class="error">
+                <p>Error al cargar la bodega</p>
+                <p style="font-size: 0.8rem; margin-top: 0.5rem; color: #888;">
+                    Usuario: ${GITHUB_USERNAME}<br>
+                    ${error.message}
+                </p>
+            </div>
+        `;
+    }
+}
+
+window.filterProjectsByTopic = filterProjectsByTopic;
+window.capitalize = capitalize;
 loadProjects();
