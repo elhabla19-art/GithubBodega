@@ -44,17 +44,6 @@ h1::after {
     border-radius: 2px;
 }
 
-.subtitle {
-    color: #E3B5A4;
-    font-size: 1rem;
-    letter-spacing: 2px;
-}
-
-.subtitle span {
-    color: #D44D5C;
-    font-weight: 500;
-}
-
 .shelves {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -338,22 +327,6 @@ footer p strong {
     margin-top: 0.5rem;
 }
 
-.filter-dropdown-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(245, 233, 226, 0.08);
-}
-
-.filter-dropdown-header span {
-    color: rgba(245, 233, 226, 0.9);
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-}
-
 .filter-topics-container {
     display: flex;
     flex-wrap: wrap;
@@ -535,10 +508,6 @@ footer p strong {
         font-size: 0.65rem;
         padding: 0.3rem 0.6rem;
     }
-    
-    .filter-dropdown-header span {
-        font-size: 0.9rem;
-    }
 }
 
 .filter-dropdown-content::-webkit-scrollbar {
@@ -561,9 +530,8 @@ footer p strong {
 
 /* Sincronizacion de salas */
 .sync-config {
-    padding: 0.8rem 1.2rem;
-    border-bottom: 1px solid rgba(245, 233, 226, 0.08);
-    margin-bottom: 0.8rem;
+    padding: 0.2rem 0.4rem 0.6rem 0.4rem;
+    margin-bottom: 0.2rem;
 }
 
 .sync-toggle {
@@ -594,28 +562,23 @@ footer p strong {
     font-size: 0.9rem;
 }
 
-.sync-toggle .sync-label .hint {
-    font-size: 0.7rem;
-    color: #888;
-    letter-spacing: 0.3px;
-}
-
 .sync-divider {
     border: none;
     border-top: 1px solid rgba(245, 233, 226, 0.06);
-    margin: 0.6rem 0;
+    margin: 0.2rem 0 0.6rem 0;
 }
 
 .sync-indicator {
     display: none;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 600;
     color: #4CAF50;
     background: #4CAF5022;
-    padding: 2px 12px;
+    padding: 2px 14px;
     border-radius: 12px;
     border: 1px solid #4CAF5044;
-    margin-top: 4px;
-    letter-spacing: 0.5px;
+    margin-top: 6px;
+    letter-spacing: 1px;
 }
 
 .sync-indicator.active {

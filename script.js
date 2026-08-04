@@ -36,15 +36,18 @@ function initSync() {
         syncEnabled = this.checked;
         localStorage.setItem('syncEnabled', syncEnabled);
         updateSyncUI(syncIndicator);
+        // Cerrar dropdown al cambiar el estado
+        closeDropdown();
     });
 }
 
 function updateSyncUI(indicator) {
     if (!indicator) return;
     if (syncEnabled) {
-        indicator.textContent = 'Sala unificada: ' + ROOM_CODE;
+        indicator.textContent = 'GRIL';
         indicator.classList.add('active');
     } else {
+        indicator.textContent = '';
         indicator.classList.remove('active');
     }
 }
